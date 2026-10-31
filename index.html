@@ -730,14 +730,11 @@
                     </div>
                 </div>
 
-                <div class="sub-bar">
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="color: var(--muted); font-size: 13px;">${filtered.length} ürün</span>
-                        <div class="filter-group" style="margin-left: 10px;">
-                            <button class="pill-btn ${currentSort === 'newest' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('newest')">Yeniden Eskiye</button>
-                            <button class="pill-btn ${currentSort === 'price-asc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-asc')">Fiyat Artan</button>
-                            <button class="pill-btn ${currentSort === 'price-desc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-desc')">Fiyat Azalan</button>
-                        </div>
+<div class="sub-bar">
+                    <div class="filter-group">
+                        <button class="pill-btn ${currentSort === 'newest' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('newest')">Yeniden Eskiye</button>
+                        <button class="pill-btn ${currentSort === 'price-asc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-asc')">Fiyat Artan</button>
+                        <button class="pill-btn ${currentSort === 'price-desc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-desc')">Fiyat Azalan</button>
                     </div>
                     <div class="view-switcher">
                         <button class="view-btn ${currentView === 'galeri' ? 'active' : ''}" onclick="setView('galeri')">Galeri</button>
@@ -746,11 +743,13 @@
                     </div>
                 </div>
 
+                <div style="margin-bottom: 16px; color: var(--muted); font-size: 13px; font-weight: 500;">
+                    ${filtered.length} ürün listeleniyor
+                </div>
+
                 <div id="productContainer">
                     ${renderProductContent(filtered)}
                 </div>
-            `;
-        }
 
         function renderProductContent(list) {
             if (list.length === 0) {
