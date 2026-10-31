@@ -495,19 +495,19 @@
 <body>
 
     <div id="app" class="container">
-        <!-- İçerik Dinamik Yüklenir -->
         <div class="loading">Koleksiyon yükleniyor...</div>
     </div>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbx7oos4otHQnEamRARgMHE4rj4nLXtMVQPOVoTMi6GOK-_a3xnoO17z4R5Z-tVuIAQe/exec";
+        // Kendi Apps Script Web App URL adresinizi buraya yazın
+        const API_URL = "BURAYA_APPS_SCRIPT_WEB_APP_URL_YAZILACAK";
+        
         let allProducts = [];
         let currentCategory = "Tümü";
-        let currentSort = "newest"; // Varsayılan: Yeniden Eskiye
+        let currentSort = "newest"; 
         let currentView = "galeri";
         let searchQuery = "";
         
-        // Admin State
         let isAdminLoggedIn = false;
         let editingItem = null;
 
@@ -545,26 +545,38 @@
             return raw.split(";").map(s => s.trim()).filter(Boolean);
         }
 
-        // ==================== ADMIN İŞLEMLERİ ====================
-        function toggleAdminLogin() {
+        // ==================== SUNUCU TARAFLI GÜVENLİ ADMIN GİRİŞİ ====================
+        async function toggleAdminLogin() {
             if (isAdminLoggedIn) {
                 isAdminLoggedIn = false;
                 alert("Admin modundan çıkış yapıldı.");
                 renderCatalog();
             } else {
                 const pwd = prompt("Admin Şifrenizi Girin:");
-                if (pwd === "1234") { // Şifreyi değiştirebilirsiniz
-                    isAdminLoggedIn = true;
-                    alert("Admin Modu Aktif!");
-                    renderCatalog();
-                } else if(pwd !== null) {
-                    alert("Hatalı Şifre!");
+                if (!pwd) return;
+
+                try {
+                    const res = await fetch(API_URL, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "login", password: pwd })
+                    });
+                    const result = await res.json();
+                    
+                    if (result.status === "success") {
+                        isAdminLoggedIn = true;
+                        alert("Admin Modu Aktif!");
+                        renderCatalog();
+                    } else {
+                        alert("Hatalı Şifre!");
+                    }
+                } catch (err) {
+                    alert("Sunucu bağlantı hatası!");
                 }
             }
         }
 
         async function deleteProduct(e, productName) {
-            e.stopPropagation(); // Kart tıklamasını engelle
+            e.stopPropagation();
             if (!confirm(`"${productName}" adlı ürünü silmek istediğinize emin misiniz?`)) return;
 
             try {
@@ -656,7 +668,6 @@
                 if (result.status === "success") {
                     alert("Ürün güncellendi!");
                     closeEditModal();
-                    // Yerel veriyi güncelle
                     const idx = allProducts.findIndex(p => p["Parfüm Adı"] === originalName);
                     if (idx !== -1) allProducts[idx] = updatedFields;
                     renderCatalog();
@@ -670,7 +681,6 @@
 
         // ==================== KATALOG GÖRÜNÜMÜ ====================
         function renderCatalog() {
-            // Filtreleme
             let filtered = allProducts.filter(item => {
                 const name = String(item["Parfüm Adı"] || "").toLowerCase();
                 const cat = String(item["Kategori"] || "").trim();
@@ -679,11 +689,9 @@
                 return matchesSearch && matchesCat;
             });
 
-           // Yeniden eskiye sıralamayı tam tersine çeviren düzeltme:
+            // Yeniden eskiye sıralama (Tablodaki yeni eklenenler en üste gelecek şekilde)
             if (currentSort === "newest") {
-                // Eğer eklenenler alta gidiyorsa ters çevirir, üste geliyorsa direkt bırakırız.
-                // Şu an ters çalıştığı için .reverse() metodunu kaldırıyoruz:
-                filtered = [...filtered]; 
+                filtered = [...filtered];
             } else if (currentSort === "price-asc") {
                 filtered.sort((a, b) => Number(a["Fiyat"] || 0) - Number(b["Fiyat"] || 0));
             } else if (currentSort === "price-desc") {
@@ -991,7 +999,6 @@
 
         window.onpopstate = () => { handleRoute(); };
 
-        // Uygulamayı başlat
         initApp();
     </script>
 </body>
