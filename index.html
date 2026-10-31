@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matmazel Koku - Parfüm Koleksiyonu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FBF9F6;
+            --surface: #FFFFFF;
+            --border: #EDE6DA;
+            --border-strong: #D8C4A0;
+            --text: #1F1D1A;
+            --text2: #4A463F;
+            --muted: #8A8378;
+            --gold: #8A6A3A;
+            --tint: #F4F0E9;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 48px 20px 72px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 36px;
+            position: relative;
+        }
+        .brand-subtitle {
+            color: var(--gold);
+            font-size: 12px;
+            letter-spacing: 0.32em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(28px, 5vw, 44px);
+            font-weight: 600;
+            margin-top: 12px;
+            line-height: 1.12;
+        }
+        .divider {
+            width: 54px;
+            height: 1px;
+            background: var(--gold);
+            margin: 20px auto 0;
+            opacity: 0.7;
+        }
+        .wa-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #25D366;
+            color: #FFFFFF;
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+            margin-top: 16px;
+            transition: opacity 0.2s ease;
+        }
+        .wa-btn:hover { opacity: 0.9; }
+
+        /* Admin Giriş Barı */
+        .admin-top-bar {
+            position: absolute;
+            right: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-btn-toggle {
+            background: transparent;
+            border: 1px solid var(--border-strong);
+            color: var(--gold);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Kontroller & Filtreler */
+        .controls-bar {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        @media(min-width: 768px) {
+            .controls-bar { flex-direction: row; justify-content: space-between; align-items: center; }
+        }
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+        }
+        .search-box input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 999px;
+            height: 42px;
+            padding-left: 40px;
+            padding-right: 16px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+        }
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+        }
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        .pill-btn {
+            height: 38px;
+            padding: 0 18px;
+            border-radius: 999px;
+            background: var(--surface);
+            color: var(--text2);
+            border: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .pill-btn.active {
+            background: var(--gold);
+            color: #FFFFFF;
+            border-color: var(--gold);
+        }
+
+        .sub-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .view-switcher {
+            display: inline-flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 4px;
+            gap: 2px;
+        }
+        .view-btn {
+            border: none;
+            cursor: pointer;
+            padding: 7px 16px;
+            border-radius: 999px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            background: transparent;
+            color: var(--text2);
+            transition: all 0.2s ease;
+        }
+        .view-btn.active {
+            background: var(--gold);
+            color: #FFFFFF;
+        }
+
+        /* Grid / Kartlar */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        @media(min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 20px; } }
+        @media(min-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+        
+        .pcard {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            cursor: pointer;
+            transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+            position: relative;
+        }
+        .pcard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 40px -18px rgba(138,106,58,.35);
+            border-color: var(--border-strong);
+        }
+        .img-container {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            background: var(--tint);
+            overflow: hidden;
+        }
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform .7s ease;
+        }
+        .pcard:hover img { transform: scale(1.06); }
+        .ptag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(255,255,255,0.92);
+            color: var(--gold);
+            font-size: 10px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+        }
+        .pcard-body {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        @media(min-width: 640px) { .pcard-body { padding: 18px; } }
+        .pname {
+            color: var(--text);
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            line-height: 1.35;
+            margin: 0;
+            min-height: 42px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        @media(min-width: 640px) { .pname { font-size: 17px; min-height: 46px; } }
+        .card-footer {
+            margin-top: auto;
+            padding-top: 14px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .pprice {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        @media(min-width: 640px) { .pprice { font-size: 22px; } }
+        .pcta {
+            color: var(--gold);
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity .35s ease, transform .35s ease;
+            white-space: nowrap;
+        }
+        .pcard:hover .pcta { opacity: 1; transform: translateY(0); }
+
+        /* Admin Aksiyon Butonları */
+        .admin-card-actions {
+            background: var(--tint);
+            padding: 8px 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .admin-btn {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .admin-btn-edit { background: #EAB308; color: #fff; }
+        .admin-btn-delete { background: #EF4444; color: #fff; }
+
+        /* Modal (Düzenleme Penceresi) */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-content {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-strong);
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text2);
+            margin-bottom: 4px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* Liste Görünümü */
+        .list-view {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+        .list-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            cursor: pointer;
+            border-top: 1px solid var(--border);
+            transition: background 0.2s ease;
+        }
+        .list-row:first-child { border-top: none; }
+        .list-row:hover { background: var(--tint); }
+        .list-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--tint);
+            flex-shrink: 0;
+        }
+        .list-img img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Fiyat Tablosu */
+        .price-table {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .price-table th {
+            background: var(--tint);
+            padding: 12px 16px;
+            font-size: 11px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600;
+            text-align: center;
+        }
+        .price-table td {
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--text2);
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+        .price-table tr:hover { background: var(--tint); cursor: pointer; }
+
+        /* Detay Sayfası Tasarımı */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        @media(min-width: 1024px) {
+            .detail-grid { grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: start; }
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            font-size: 13px;
+            text-decoration: none;
+            margin-bottom: 22px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        .back-link:hover { color: var(--text); }
+        .gal-wrap {
+            position: relative;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .gal-main {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            background: var(--tint);
+            cursor: zoom-in;
+        }
+        .gal-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .thumb-list {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .thumb-btn {
+            flex: 0 0 auto;
+            width: 74px;
+            height: 74px;
+            padding: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--tint);
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .thumb-btn.active { border-color: var(--gold); outline: 2px solid var(--gold); }
+        .thumb-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(31,29,26,0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .lightbox img { max-width: 92vw; max-height: 86vh; object-fit: contain; border-radius: 8px; }
+        .lightbox-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .loading { text-align: center; padding: 60px; color: var(--muted); font-size: 15px; grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="container">
+        <!-- İçerik Dinamik Yüklenir -->
+        <div class="loading">Koleksiyon yükleniyor...</div>
+    </div>
+
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbx7oos4otHQnEamRARgMHE4rj4nLXtMVQPOVoTMi6GOK-_a3xnoO17z4R5Z-tVuIAQe/exec";
+        let allProducts = [];
+        let currentCategory = "Tümü";
+        let currentSort = "newest"; // Varsayılan: Yeniden Eskiye
+        let currentView = "galeri";
+        let searchQuery = "";
+        
+        // Admin State
+        let isAdminLoggedIn = false;
+        let editingItem = null;
+
+        async function initApp() {
+            try {
+                const res = await fetch(API_URL);
+                allProducts = await res.json();
+                handleRoute();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('app').innerHTML = `<div class="loading">Ürünler yüklenirken bir hata oluştu. Lütfen bağlantınızı kontrol edin.</div>`;
+            }
+        }
+
+        function handleRoute() {
+            const params = new URLSearchParams(window.location.search);
+            const detailIndex = params.get('urun');
+            
+            if (detailIndex !== null && allProducts[detailIndex]) {
+                renderDetail(allProducts[detailIndex], detailIndex);
+            } else {
+                renderCatalog();
+            }
+        }
+
+        function formatPrice(val) {
+            const n = Number(val);
+            if (Number.isNaN(n)) return "0,00";
+            return n.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getImages(item) {
+            const raw = item["Görseller"];
+            if (!raw) return [];
+            return raw.split(";").map(s => s.trim()).filter(Boolean);
+        }
+
+        // ==================== ADMIN İŞLEMLERİ ====================
+        function toggleAdminLogin() {
+            if (isAdminLoggedIn) {
+                isAdminLoggedIn = false;
+                alert("Admin modundan çıkış yapıldı.");
+                renderCatalog();
+            } else {
+                const pwd = prompt("Admin Şifrenizi Girin:");
+                if (pwd === "1234") { // Şifreyi değiştirebilirsiniz
+                    isAdminLoggedIn = true;
+                    alert("Admin Modu Aktif!");
+                    renderCatalog();
+                } else if(pwd !== null) {
+                    alert("Hatalı Şifre!");
+                }
+            }
+        }
+
+        async function deleteProduct(e, productName) {
+            e.stopPropagation(); // Kart tıklamasını engelle
+            if (!confirm(`"${productName}" adlı ürünü silmek istediğinize emin misiniz?`)) return;
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "delete", productName: productName })
+                });
+                const result = await res.json();
+                if (result.status === "success") {
+                    alert("Ürün başarıyla silindi!");
+                    allProducts = allProducts.filter(p => p["Parfüm Adı"] !== productName);
+                    renderCatalog();
+                } else {
+                    alert("Hata: " + result.message);
+                }
+            } catch (err) {
+                alert("Bağlantı hatası!");
+            }
+        }
+
+        function openEditModal(e, item) {
+            e.stopPropagation();
+            editingItem = { ...item };
+            renderEditModal();
+        }
+
+        function renderEditModal() {
+            if (!editingItem) return;
+            
+            const existingModal = document.getElementById('adminModal');
+            if (existingModal) existingModal.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'adminModal';
+            modal.className = 'modal-overlay';
+            
+            let fieldsHtml = '';
+            Object.keys(editingItem).forEach(key => {
+                if (key === 'rowIndex' || key === 'uniqueId') return;
+                fieldsHtml += `
+                    <div class="form-group">
+                        <label>${key}</label>
+                        <input type="text" id="field_${key}" value="${editingItem[key] || ''}">
+                    </div>
+                `;
+            });
+
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3 style="font-family:'Playfair Display',serif; margin-top:0; font-size:20px;">Ürünü Düzenle</h3>
+                    <form onsubmit="saveProductEdit(event)">
+                        ${fieldsHtml}
+                        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+                            <button type="button" onclick="closeEditModal()" class="pill-btn">İptal</button>
+                            <button type="submit" class="pill-btn active">Kaydet</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('adminModal');
+            if (modal) modal.remove();
+            editingItem = null;
+        }
+
+        async function saveProductEdit(e) {
+            e.preventDefault();
+            const originalName = editingItem["Parfüm Adı"];
+            const updatedFields = {};
+
+            Object.keys(editingItem).forEach(key => {
+                const input = document.getElementById(`field_${key}`);
+                if (input) updatedFields[key] = input.value;
+            });
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "update",
+                        productName: originalName,
+                        fields: updatedFields
+                    })
+                });
+                const result = await res.json();
+                if (result.status === "success") {
+                    alert("Ürün güncellendi!");
+                    closeEditModal();
+                    // Yerel veriyi güncelle
+                    const idx = allProducts.findIndex(p => p["Parfüm Adı"] === originalName);
+                    if (idx !== -1) allProducts[idx] = updatedFields;
+                    renderCatalog();
+                } else {
+                    alert("Güncelleme hatası: " + result.message);
+                }
+            } catch (err) {
+                alert("Bağlantı hatası!");
+            }
+        }
+
+        // ==================== KATALOG GÖRÜNÜMÜ ====================
+        function renderCatalog() {
+            // Filtreleme
+            let filtered = allProducts.filter(item => {
+                const name = String(item["Parfüm Adı"] || "").toLowerCase();
+                const cat = String(item["Kategori"] || "").trim();
+                const matchesSearch = name.includes(searchQuery.toLowerCase());
+                const matchesCat = currentCategory === "Tümü" || cat.toLowerCase() === currentCategory.toLowerCase();
+                return matchesSearch && matchesCat;
+            });
+
+           // Yeniden eskiye sıralamayı tam tersine çeviren düzeltme:
+            if (currentSort === "newest") {
+                // Eğer eklenenler alta gidiyorsa ters çevirir, üste geliyorsa direkt bırakırız.
+                // Şu an ters çalıştığı için .reverse() metodunu kaldırıyoruz:
+                filtered = [...filtered]; 
+            } else if (currentSort === "price-asc") {
+                filtered.sort((a, b) => Number(a["Fiyat"] || 0) - Number(b["Fiyat"] || 0));
+            } else if (currentSort === "price-desc") {
+                filtered.sort((a, b) => Number(b["Fiyat"] || 0) - Number(a["Fiyat"] || 0));
+            }
+
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <header>
+                    <div class="admin-top-bar">
+                        <button class="admin-btn-toggle" onclick="toggleAdminLogin()">
+                            ${isAdminLoggedIn ? '🔓 Admin Çıkış' : '🔒 Admin'}
+                        </button>
+                    </div>
+                    <div class="brand-subtitle">Matmazel Koku</div>
+                    <h1>Parfüm Koleksiyonu</h1>
+                    <div class="divider"></div>
+                    <p style="color: var(--muted); font-size: 15px; margin-top: 16px;">Katalogda yer alan tüm ürünler mevcuttur.</p>
+                    <div>
+                        <a href="https://wa.me/905349762141?text=Merhaba,%20katalogdaki%20ürünler%20hakkında%20bilgi%20almak%20ve%20sipariş%20vermek%20istiyorum." target="_blank" class="wa-btn">
+                            WhatsApp ile Sipariş Ver
+                        </a>
+                    </div>
+                </header>
+
+                <div class="controls-bar">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Parfüm ara..." value="${searchQuery}" oninput="onSearchInput(this)">
+                    </div>
+                    <div class="filter-group">
+                        <button class="pill-btn ${currentCategory === 'Tümü' ? 'active' : ''}" onclick="setCategory('Tümü')">Tümü</button>
+                        <button class="pill-btn ${currentCategory === 'Kadın' ? 'active' : ''}" onclick="setCategory('Kadın')">Kadın</button>
+                        <button class="pill-btn ${currentCategory === 'Erkek' ? 'active' : ''}" onclick="setCategory('Erkek')">Erkek</button>
+                        <button class="pill-btn ${currentCategory === 'Unisex' ? 'active' : ''}" onclick="setCategory('Unisex')">Unisex</button>
+                    </div>
+                </div>
+
+                <div class="sub-bar">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="color: var(--muted); font-size: 13px;">${filtered.length} ürün</span>
+                        <div class="filter-group" style="margin-left: 10px;">
+                            <button class="pill-btn ${currentSort === 'newest' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('newest')">Yeniden Eskiye</button>
+                            <button class="pill-btn ${currentSort === 'price-asc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-asc')">Fiyat Artan</button>
+                            <button class="pill-btn ${currentSort === 'price-desc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-desc')">Fiyat Azalan</button>
+                        </div>
+                    </div>
+                    <div class="view-switcher">
+                        <button class="view-btn ${currentView === 'galeri' ? 'active' : ''}" onclick="setView('galeri')">Galeri</button>
+                        <button class="view-btn ${currentView === 'liste' ? 'active' : ''}" onclick="setView('liste')">Liste</button>
+                        <button class="view-btn ${currentView === 'fiyat' ? 'active' : ''}" onclick="setView('fiyat')">Fiyat Tablosu</button>
+                    </div>
+                </div>
+
+                <div id="productContainer">
+                    ${renderProductContent(filtered)}
+                </div>
+            `;
+        }
+
+        function renderProductContent(list) {
+            if (list.length === 0) {
+                return `<div style="text-align:center; padding:60px 20px; background:var(--surface); border:1px solid var(--border); border-radius:14px;">
+                    <div style="font-family:'Playfair Display',serif; font-size:20px; color:var(--text);">Sonuç bulunamadı</div>
+                    <p style="color:var(--muted); font-size:14px; margin-top:8px;">Aradığınız kriterde ürün bulunamadı.</p>
+                </div>`;
+            }
+
+            const getOriginalIndex = (item) => allProducts.indexOf(item);
+
+            if (currentView === 'galeri') {
+                return `<div class="grid">
+                    ${list.map(item => {
+                        const imgs = getImages(item);
+                        const origIdx = getOriginalIndex(item);
+                        const name = item["Parfüm Adı"] || "";
+                        const cat = item["Kategori"] || "";
+                        const price = formatPrice(item["Fiyat"]);
+                        return `
+                            <div class="pcard" onclick="goToDetail(${origIdx})">
+                                <div class="img-container">
+                                    ${imgs[0] ? `<img src="${imgs[0]}" alt="${name}" loading="lazy">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px;">Görsel yok</div>'}
+                                    ${cat ? `<span class="ptag">${cat}</span>` : ''}
+                                </div>
+                                <div class="pcard-body">
+                                    <h3 class="pname">${name}</h3>
+                                    <div class="card-footer">
+                                        <div class="pprice">₺${price}</div>
+                                        <span class="pcta">İncele ➔</span>
+                                    </div>
+                                </div>
+                                ${isAdminLoggedIn ? `
+                                    <div class="admin-card-actions">
+                                        <button class="admin-btn admin-btn-edit" onclick="openEditModal(event, ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️ Düzenle</button>
+                                        <button class="admin-btn admin-btn-delete" onclick="deleteProduct(event, '${name.replace(/'/g, "\\'")}')">🗑️ Sil</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>`;
+            } else if (currentView === 'liste') {
+                return `<div class="list-view">
+                    ${list.map(item => {
+                        const imgs = getImages(item);
+                        const origIdx = getOriginalIndex(item);
+                        const name = item["Parfüm Adı"] || "";
+                        const cat = item["Kategori"] || "";
+                        const price = formatPrice(item["Fiyat"]);
+                        return `
+                            <div class="list-row" onclick="goToDetail(${origIdx})">
+                                <div class="list-img">
+                                    ${imgs[0] ? `<img src="${imgs[0]}" alt="${name}" loading="lazy">` : ''}
+                                </div>
+                                <div style="flex:1; min-width:0;">
+                                    ${cat ? `<div style="font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); font-weight:600;">${cat}</div>` : ''}
+                                    <div style="font-family:'Playfair Display',serif; color:var(--text); font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</div>
+                                </div>
+                                <div style="font-family:'Playfair Display',serif; color:var(--gold); font-size:17px; font-weight:600;">₺${price}</div>
+                                ${isAdminLoggedIn ? `
+                                    <div style="display:flex; gap:4px; margin-left:10px;">
+                                        <button class="admin-btn admin-btn-edit" onclick="openEditModal(event, ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️</button>
+                                        <button class="admin-btn admin-btn-delete" onclick="deleteProduct(event, '${name.replace(/'/g, "\\'")}')">🗑️</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>`;
+            } else {
+                return `<table class="price-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th style="text-align: left;">Ürün</th>
+                            <th>Kategori</th>
+                            <th style="text-align: right;">Fiyat</th>
+                            ${isAdminLoggedIn ? '<th>İşlem</th>' : ''}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${list.map((item, idx) => {
+                            const origIdx = getOriginalIndex(item);
+                            const name = item["Parfüm Adı"] || "";
+                            const cat = item["Kategori"] || "—";
+                            const price = formatPrice(item["Fiyat"]);
+                            return `
+                                <tr onclick="goToDetail(${origIdx})">
+                                    <td style="color:var(--muted);">${idx + 1}</td>
+                                    <td style="text-align: left; font-family:'Playfair Display',serif; color:var(--text); font-weight:500;">${name}</td>
+                                    <td style="color:var(--muted);">${cat}</td>
+                                    <td style="text-align: right; font-family:'Playfair Display',serif; color:var(--gold); font-weight:600;">₺${price}</td>
+                                    ${isAdminLoggedIn ? `
+                                        <td>
+                                            <button class="admin-btn admin-btn-edit" onclick="openEditModal(event, ${JSON.stringify(item).replace(/"/g, '&quot;')})">✏️</button>
+                                            <button class="admin-btn admin-btn-delete" onclick="deleteProduct(event, '${name.replace(/'/g, "\\'")}')">🗑️</button>
+                                        </td>
+                                    ` : ''}
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>`;
+            }
+        }
+
+        // ==================== DETAY GÖRÜNÜMÜ ====================
+        let activeImageIdx = 0;
+
+        function renderDetail(item, index) {
+            const name = item["Parfüm Adı"] || "";
+            const cat = item["Kategori"] || "";
+            const price = formatPrice(item["Fiyat"]);
+            const desc = item["Açıklama"] || "";
+            const images = getImages(item);
+            const currentImgUrl = images[activeImageIdx] || "";
+            const detailUrl = window.location.href;
+
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <a class="back-link" onclick="goBackToCatalog()">
+                    ← Katalog'a dön
+                </a>
+
+                <div class="detail-grid">
+                    <div>
+                        <div class="gal-wrap">
+                            <div class="gal-main" onclick="openLightbox(${activeImageIdx})">
+                                ${currentImgUrl ? `<img src="${currentImgUrl}" alt="${name}">` : '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted)">Görsel yok</div>'}
+                                ${images.length > 1 ? `<div style="position:absolute; left:12px; bottom:12px; background:rgba(31,29,26,0.72); color:#fff; font-size:12px; padding:4px 10px; border-radius:999px;">${activeImageIdx + 1} / ${images.length}</div>` : ''}
+                            </div>
+                        </div>
+                        ${images.length > 1 ? `
+                            <div class="thumb-list">
+                                ${images.map((img, i) => `
+                                    <button class="thumb-btn ${i === activeImageIdx ? 'active' : ''}" onclick="setActiveImage(${i})">
+                                        <img src="${img}" alt="">
+                                    </button>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div>
+                        ${cat ? `<span style="display:inline-block; color:var(--gold); font-size:11px; letter-spacing:0.18em; text-transform:uppercase; font-weight:600; border:1px solid var(--border-strong); border-radius:999px; padding:5px 12px;">${cat}</span>` : ''}
+                        <div style="color: var(--gold); font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; font-weight: 600; margin-top: ${cat ? '16px' : '0'};">Matmazel Koku</div>
+                        <h1 style="font-family:'Playfair Display',serif; font-size:clamp(26px, 4vw, 38px); margin:10px 0 14px; line-height:1.15;">${name}</h1>
+                        <div style="color:var(--gold); font-family:'Playfair Display',serif; font-size:32px; font-weight:600;">₺${price}</div>
+                        <div style="width:52px; height:1px; background:var(--gold); opacity:0.6; margin:24px 0;"></div>
+                        ${desc ? `<p style="color:var(--text2); font-size:15px; lineHeight:1.75; white-space:pre-wrap; margin:0;">${desc}</p>` : ''}
+                        
+                        <div style="display:flex; flexDirection:column; gap:12px; margin-top:30px;">
+                            <button onclick="orderWhatsApp('${name}', '${detailUrl}')" style="width:100%; background:#25D366; color:#fff; border:none; border-radius:12px; padding:15px; font-size:15px; font-weight:600; cursor:pointer; display:flex; align-items:center; justifyContent:center; gap:8px;">
+                                💬 WhatsApp'tan Sipariş Ver
+                            </button>
+                            <button onclick="shareProduct('${name}', '${detailUrl}')" style="width:100%; background:transparent; color:var(--gold); border:1px solid var(--gold); border-radius:12px; padding:14px; font-size:14px; font-weight:500; cursor:pointer; display:flex; align-items:center; justifyContent:center; gap:8px;">
+                                🔗 Ürünü Paylaş
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== ETKİLEŞİM FONKSİYONLARI ====================
+        function setCategory(cat) {
+            currentCategory = cat;
+            renderCatalog();
+        }
+
+        function setSort(sortMode) {
+            currentSort = sortMode;
+            renderCatalog();
+        }
+
+        function setView(viewMode) {
+            currentView = viewMode;
+            renderCatalog();
+        }
+
+        function onSearchInput(el) {
+            searchQuery = el.value;
+            const container = document.getElementById('productContainer');
+            let filtered = allProducts.filter(item => {
+                const name = String(item["Parfüm Adı"] || "").toLowerCase();
+                const cat = String(item["Kategori"] || "").trim();
+                return name.includes(searchQuery.toLowerCase()) && (currentCategory === "Tümü" || cat.toLowerCase() === currentCategory.toLowerCase());
+            });
+            container.innerHTML = renderProductContent(filtered);
+        }
+
+        function goToDetail(index) {
+            activeImageIdx = 0;
+            const newUrl = window.location.pathname + '?urun=' + index;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            handleRoute();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goBackToCatalog() {
+            const newUrl = window.location.pathname;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            handleRoute();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setActiveImage(idx) {
+            activeImageIdx = idx;
+            const params = new URLSearchParams(window.location.search);
+            const idxParam = params.get('urun');
+            if (idxParam !== null) {
+                renderDetail(allProducts[idxParam], idxParam);
+            }
+        }
+
+        function openLightbox(idx) {
+            const params = new URLSearchParams(window.location.search);
+            const item = allProducts[params.get('urun')];
+            const imgs = getImages(item);
+            if(!imgs[idx]) return;
+
+            const lb = document.createElement('div');
+            lb.className = 'lightbox';
+            lb.innerHTML = `
+                <button class="lightbox-close" onclick="this.parentElement.remove()">✕</button>
+                <img src="${imgs[idx]}" alt="">
+            `;
+            lb.onclick = (e) => { if(e.target === lb) lb.remove(); };
+            document.body.appendChild(lb);
+        }
+
+        function orderWhatsApp(name, url) {
+            const text = `Merhabalar, bu ürün hakkında bilgi almak ve sipariş vermek istiyorum: ${name} (${url})`;
+            window.open(`https://wa.me/905349762141?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        async function shareProduct(name, url) {
+            if (navigator.share) {
+                try { await navigator.share({ title: name, url: url }); } catch(e){}
+            } else if (navigator.clipboard) {
+                await navigator.clipboard.writeText(url);
+                alert("Ürün bağlantısı panoya kopyalandı!");
+            }
+        }
+
+        window.onpopstate = () => { handleRoute(); };
+
+        // Uygulamayı başlat
+        initApp();
+    </script>
+</body>
+</html>
