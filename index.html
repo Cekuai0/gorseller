@@ -84,6 +84,7 @@ button{font-family:inherit}
   box-shadow:inset 0 0 0 1px rgba(201,162,39,.35);
 }
 .logo-text{line-height:1.05}
+.logo-text-compact{display:none}
 .logo-text b{
   display:block;font-family:'Inter',system-ui,sans-serif;
   font-size:21px;font-weight:700;letter-spacing:.02em;
@@ -93,6 +94,8 @@ button{font-family:inherit}
   text-transform:uppercase;color:var(--gold);font-weight:600;margin-top:1px;
 }
 .nav-actions{display:flex;align-items:center;gap:10px}
+.nav-actions>*+*{margin-left:10px}
+.no-flex-gap .nav-actions>*+*{margin-left:10px}
 .nav-link{
   display:none;color:var(--text2);text-decoration:none;font-size:13.5px;
   font-weight:500;padding:8px 12px;border-radius:99px;transition:.2s var(--ease);
@@ -261,7 +264,7 @@ button{font-family:inherit}
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
 }
 @media(min-width:640px){.pname{font-size:19px;min-height:50px}}
-.card-footer{margin-top:auto;padding-top:14px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;border-top:1px solid var(--border)}
+.card-footer{margin-top:auto;padding-top:14px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:2px 8px;border-top:1px solid var(--border)}
 .pprice{color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:21px;font-weight:700;white-space:nowrap}
 @media(min-width:640px){.pprice{font-size:24px}}
 .pprice small{font-size:13px;color:var(--muted);font-family:'Inter',system-ui,sans-serif;font-weight:500}
@@ -317,6 +320,9 @@ button{font-family:inherit}
 
 /* ---------- Detail ---------- */
 .detail-grid{display:grid;grid-template-columns:1fr;gap:28px}
+.detail-grid>div{min-width:0}
+.gal-main img{min-width:0;max-width:100%}
+.gal-wrap{max-width:100%}
 @media(min-width:1024px){.detail-grid{grid-template-columns:1.02fr .98fr;gap:52px;align-items:start}}
 .back-link{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;text-decoration:none;margin-bottom:22px;font-weight:600;cursor:pointer;padding:8px 14px;border-radius:99px;border:1px solid var(--border);background:var(--surface);transition:.22s var(--ease)}
 .back-link:hover{color:var(--text);border-color:var(--border-strong);background:var(--gold-soft)}
@@ -518,7 +524,23 @@ body{background:radial-gradient(ellipse at 8% 5%,#f3e1e4 0,transparent 32%),radi
 }
 body.sheet-open{overflow:hidden}
 
+@media(max-width:520px){
+  .nav-inner{gap:10px}
+  .nav-inner .btn{white-space:nowrap;flex:0 0 auto;font-size:12px;padding:8px 12px}
+  .logo-text b{display:none}
+  .logo-text-compact{display:block;font-family:'Inter',system-ui,sans-serif;font-size:15px;font-weight:700;letter-spacing:.01em}
+  .logo-text small{display:none}
+}
+@media(max-width:380px){
+  .logo-text{display:none}
+  .nav-inner .btn{font-size:11.5px;padding:7px 10px}
+  .pcta{font-size:11px;margin-left:auto}
+  .nav-inner{gap:8px;padding:0 12px}
+  .nav-inner .btn{font-size:11px;padding:7px 10px;gap:4px}
+  .pcard-body{padding:12px}
+}
 @media(max-width:860px){
+  .btn-wa{white-space:normal;overflow-wrap:anywhere}
   .toolbar{position:static;top:auto;padding:0;margin:0;border:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
   .toolbar .controls-bar,.toolbar .sub-bar-wrapper{display:none}
   .mobile-filterbar{
@@ -575,7 +597,7 @@ body.sheet-open{overflow:hidden}
   <div class="nav-inner">
     <a class="logo" onclick="goBackToCatalog()">
       <div class="logo-mark">M</div>
-      <div class="logo-text"><b>Matmazel Koku</b><small>Parfüm Koleksiyonu</small></div>
+      <div class="logo-text"><b>Matmazel Koku</b><span class="logo-text-compact">Matmazel</span><small>Parfüm Koleksiyonu</small></div>
     </a>
     <div class="nav-actions">
       <button class="btn btn-ghost" onclick="toggleAdminLogin()" id="adminNavBtn">🔒 Admin</button>
@@ -608,7 +630,7 @@ window.addEventListener('scroll', () => {
 
 // Kendi Apps Script Web App URL adresinizi buraya yazın
 // Kayan şeritte gösterilecek markalar (ürün verisinde "Marka" alanı varsa onlar kullanılır)
-const DEFAULT_BRANDS = ["Chanel","Dior","Tom Ford","Yves Saint Laurent","Lancôme","Gucci","Versace","Armani","Hugo Boss","Carolina Herrera","Paco Rabanne","Givenchy","Mugler","Jean Paul Gaultier"];
+const DEFAULT_BRANDS = ["Chanel","Dior","Tom Ford","Yves Saint Laurent","Lancôme","Gucci","Versace","Armani","Guerlain","Hugo Boss","Carolina Herrera","Paco Rabanne","Givenchy","Mugler","Jean Paul Gaultier"];
 
 const API_URL = "https://script.google.com/macros/s/AKfycbx7oos4otHQnEamRARgMHE4rj4nLXtMVQPOVoTMi6GOK-_a3xnoO17z4R5Z-tVuIAQe/exec";
 
@@ -1239,5 +1261,5 @@ document.getElementById('tickerRoot').innerHTML = brandTicker();
 updateFavoriteCount();
 initApp();
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a533b0515faedb46',t:'MTc5MzQ2MDQ5OA=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a533b0515faedb46',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a534542e182f1628',t:'MTc5MzQ2NzIwOQ=='};var l=window.parent.location,o;try{o=new URL(l.origin).origin}catch(e){try{o=new URL(new URL(l.href).origin).origin}catch(e){o=''}}var u='/cdn-cgi/challenge-platform/scripts/jsd/main.js?ray=a534542e182f1628',a=document.createElement('script');a.src=o?new URL(u,o).href:u;document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
