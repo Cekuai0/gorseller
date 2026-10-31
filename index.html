@@ -153,15 +153,27 @@
             border-color: var(--gold);
         }
 
-        .sub-bar {
+        /* Yenilenmiş Sub-Bar Düzeni */
+        .sub-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+        .sub-bar-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 14px;
-            margin-bottom: 12px;
+            gap: 12px;
             flex-wrap: wrap;
         }
+        .product-count-badge {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 500;
+            padding-top: 2px;
         }
+
         .view-switcher {
             display: inline-flex;
             background: var(--surface);
@@ -730,21 +742,22 @@
                     </div>
                 </div>
 
-                <div class="sub-bar">
-                    <div class="filter-group">
-                        <button class="pill-btn ${currentSort === 'newest' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('newest')">Yeniden Eskiye</button>
-                        <button class="pill-btn ${currentSort === 'price-asc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-asc')">Fiyat Artan</button>
-                        <button class="pill-btn ${currentSort === 'price-desc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-desc')">Fiyat Azalan</button>
+                <div class="sub-bar-wrapper">
+                    <div class="sub-bar-row">
+                        <div class="filter-group">
+                            <button class="pill-btn ${currentSort === 'newest' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('newest')">Yeniden Eskiye</button>
+                            <button class="pill-btn ${currentSort === 'price-asc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-asc')">Fiyat Artan</button>
+                            <button class="pill-btn ${currentSort === 'price-desc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-desc')">Fiyat Azalan</button>
+                        </div>
+                        <div class="view-switcher">
+                            <button class="view-btn ${currentView === 'galeri' ? 'active' : ''}" onclick="setView('galeri')">Galeri</button>
+                            <button class="view-btn ${currentView === 'liste' ? 'active' : ''}" onclick="setView('liste')">Liste</button>
+                            <button class="view-btn ${currentView === 'fiyat' ? 'active' : ''}" onclick="setView('fiyat')">Fiyat Tablosu</button>
+                        </div>
                     </div>
-                    <div class="view-switcher">
-                        <button class="view-btn ${currentView === 'galeri' ? 'active' : ''}" onclick="setView('galeri')">Galeri</button>
-                        <button class="view-btn ${currentView === 'liste' ? 'active' : ''}" onclick="setView('liste')">Liste</button>
-                        <button class="view-btn ${currentView === 'fiyat' ? 'active' : ''}" onclick="setView('fiyat')">Fiyat Tablosu</button>
+                    <div class="product-count-badge">
+                        ${filtered.length} ürün listeleniyor
                     </div>
-                </div>
-
-                <div style="margin-bottom: 20px; color: var(--muted); font-size: 13px; font-weight: 500;">
-                    ${filtered.length} ürün listeleniyor
                 </div>
 
                 <div id="productContainer">
