@@ -730,7 +730,7 @@
                     </div>
                 </div>
 
-<div class="sub-bar">
+                <div class="sub-bar">
                     <div class="filter-group">
                         <button class="pill-btn ${currentSort === 'newest' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('newest')">Yeniden Eskiye</button>
                         <button class="pill-btn ${currentSort === 'price-asc' ? 'active' : ''}" style="height: 32px; font-size: 12px; padding: 0 12px;" onclick="setSort('price-asc')">Fiyat Artan</button>
@@ -743,7 +743,8 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 16px; color: var(--muted); font-size: 13px; font-weight: 500;">
+                <!-- Ürün Sayısı Artık Tamamen Ayrı ve Temiz Bir Satırda -->
+                <div style="margin-bottom: 20px; color: var(--muted); font-size: 13px; font-weight: 500;">
                     ${filtered.length} ürün listeleniyor
                 </div>
 
